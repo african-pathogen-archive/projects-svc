@@ -227,7 +227,7 @@ function App() {
 							/>
 						</p>
 						<p className="py-4">
-							<select className="select select-bordered w-full" onChange={handleChange} name="group" value={formData.group} name="group">
+							<select className="select select-bordered w-full" onChange={handleChange} name="group" value={formData.group}>
 								<option disabled selected>Select a Group</option>
 								{
 									groups.map(group => (
