@@ -11,15 +11,19 @@ function App() {
 		id: '',
 		title: '',
 		pid: '',
+		group: '',
 		description: ''
 	});
 	const jwt = document.cookie.split('; ').find((row) => row.startsWith('JWT='))?.split('=')[1];
+	const egojwt = document.cookie.split('; ').find((row) => row.startsWith('EGOJWT='))?.split('=')[1];
 	const [user, setUser] = useState({});
+	const [groups, setGroups] = useState([]);
 
 	useEffect(() => {
 
 		getProjects();
 		getGreeting();
+		getGroups();
 
 
 
@@ -81,6 +85,7 @@ function App() {
 			id: '',
 			title: '',
 			pid: '',
+			group: '',
 			description: ''
 		});
 		
@@ -112,6 +117,16 @@ function App() {
 			.catch(error => console.error(error));
 	}
 
+	const getGroups = () => {
+		axios.get('https://apaego.sanbi.ac.za/api/groups', {
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${egojwt}`
+		}}).then(response => {
+			setGroups(response.data.resultSet);
+		});
+	}
+
 	const getGreeting = () => {
 		axios.get('http://localhost:5000/api/', {
 			headers: {
@@ -122,6 +137,12 @@ function App() {
 		});
 	}
 
+	const updateToken = () => {
+		axios.get('http://localhost:5000/api/generate-token').then(response => {
+			document.cookie = `JWT=${response.data.token}`;
+			window.location.reload();
+		});
+	}
 
 	return (
 		<div className="container mx-auto py-6">
@@ -139,6 +160,7 @@ function App() {
 			<p className="py-4">
 				<button className="btn btn-primary btn-sm" onClick={() => newProject()}>NEW PROJECT</button>
 				<button className="btn btn-primary btn-sm ms-2" onClick={() => document.getElementById('user').showModal()}>USER</button>
+				<button className="btn btn-primary btn-sm ms-2" onClick={() => updateToken()}>UPDATE TOKEN</button>
 			</p>
 
 
@@ -147,9 +169,9 @@ function App() {
 					<tr>
 						<th>ID</th>
 						<th>PID</th>
+						<th>Group</th>
 						<th>Title</th>
 						<th>Description</th>
-						
 						<th>Owner</th>
 						<th>Created At</th>
 						<th>Updated At</th>
@@ -161,6 +183,7 @@ function App() {
 						<tr key={project.id}>
 							<td>{project.id}</td>
 							<td>{project.pid}</td>
+							<td>{project.group}</td>
 							<td>{project.title}</td>
 							<td>{project.description}</td>
 							<td>{project.owner_id}</td>
@@ -202,6 +225,16 @@ function App() {
 								value={formData.pid}
 								onChange={handleChange}
 							/>
+						</p>
+						<p className="py-4">
+							<select className="select select-bordered w-full" onChange={handleChange} name="group" value={formData.group} name="group">
+								<option disabled selected>Select a Group</option>
+								{
+									groups.map(group => (
+										<option key={group.name} value={group.name}>{group.name}</option>
+									))
+								}
+							</select>
 						</p>
 						<p className="py-4">
 							<textarea

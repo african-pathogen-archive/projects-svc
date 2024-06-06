@@ -15,18 +15,15 @@ app = Flask(__name__)
 app.config.from_object(Config)
 CORS(app, resources={r"/api/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE"]}})
 
-# Ensure json_encoder is defined
 if not hasattr(app, 'json_encoder'):
     app.json_encoder = JSONEncoder
 
 
-# Initialize extensions
 db.init_app(app)
 migrate = Migrate(app, db)
 jwtm = JWTManager(app)
 api = SwaggerApi(app, api_version='0.1', api_spec_url='/swagger')
 
-# Swagger configuration
 SWAGGER_URL = '/swagger'
 API_URL = '/swagger.json'
 swaggerui_blueprint = get_swaggerui_blueprint(
@@ -40,44 +37,12 @@ app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 class User(Resource):
     @jwt_required()
-    @swagger.doc({
-        'tags': ['User'],
-        'description': 'Returns user info from JWT token',
-        'responses': {
-            '200': {
-                'description': 'JWT Payload',
-                'schema': {
-                    'type': 'object',
-                    'properties': {
-                        'message': {
-                            'type': 'string',
-                            'example': ''
-                        }
-                    }
-                }
-            }
-        }
-    })
     def get(self):
         claims = get_jwt() 
         return claims
     
 class Projects(Resource):
-    @swagger.doc({
-        'tags': ['Projects'],
-        'description': 'Get all projects from the database',
-        'responses': {
-            '200': {
-                'description': 'List of projects',
-                'schema': {
-                    'type': 'array',
-                    'items': {
-                        '$ref': '#/definitions/Project'
-                    }
-                }
-            }
-        }
-    })
+    
     def get(self):
         projects = Project.query.all()
         project_list = []
@@ -86,6 +51,7 @@ class Projects(Resource):
                 'id': project.id,
                 'title': project.title,
                 'pid': project.pid,
+                'group': project.group,
                 'description': project.description,
                 'owner_id': project.owner_id,
                 'created_at': project.created_at.strftime('%Y-%m-%d %H:%M:%S'),
@@ -94,35 +60,12 @@ class Projects(Resource):
             project_list.append(project_data)
         return project_list
     
-    # POST method (create new project)
-    @swagger.doc({
-        'tags': ['Projects'],
-        'description': 'Create a new project',
-        'parameters': [
-            {
-                'name': 'project',
-                'description': 'Project details',
-                'in': 'body',
-                'schema': {
-                    '$ref': '#/definitions/Project'
-                }
-            }
-        ],
-        'responses': {
-            '201': {
-                'description': 'Project created',
-                'schema': {
-                    '$ref': '#/definitions/Project'
-                }
-            }
-        }
-    })
-
     @jwt_required()
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('title', required=True)
         parser.add_argument('pid', required=True)
+        parser.add_argument('group', required=True)
         parser.add_argument('description', required=True)
         args = parser.parse_args()
 
@@ -130,6 +73,7 @@ class Projects(Resource):
         new_project = Project(
             title=args['title'],
             pid=args['pid'],
+            group=args['group'],
             description=args['description'],
             owner_id=get_jwt_identity()
         )
@@ -139,42 +83,12 @@ class Projects(Resource):
 
         return new_project.as_dict(), 201
 
-    # PUT method (update an existing project)
-    @swagger.doc({
-        'tags': ['Projects'],
-        'description': 'Update an existing project',
-        'parameters': [
-            {
-                'name': 'id',
-                'description': 'Project ID',
-                'in': 'path',
-                'type': 'integer',
-                'required': True
-            },
-            {
-                'name': 'project',
-                'description': 'Project details',
-                'in': 'body',
-                'schema': {
-                    '$ref': '#/definitions/Project'
-                }
-            }
-        ],
-        'responses': {
-            '200': {
-                'description': 'Project updated',
-                'schema': {
-                    '$ref': '#/definitions/Project'
-                }
-            }
-        }
-    })
-    
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', type=int, required=True)
         parser.add_argument('title')
         parser.add_argument('pid')
+        parser.add_argument('group')
         parser.add_argument('description')
         args = parser.parse_args()
 
@@ -186,6 +100,8 @@ class Projects(Resource):
             project.title = args['title']
         if args['pid']:
             project.pid = args['pid']
+        if args['group']:
+            project.group = args['group']
         if args['description']:
             project.description = args['description']
 
@@ -193,24 +109,6 @@ class Projects(Resource):
 
         return project.as_dict(), 200
     
-    @swagger.doc({
-        'tags': ['Projects'],
-        'description': 'Delete an existing project',
-        'parameters': [
-            {
-                'name': 'id',
-                'description': 'Project ID',
-                'in': 'path',
-                'type': 'integer',
-                'required': True
-            }
-        ],
-        'responses': {
-            '204': {
-                'description': 'Project deleted'
-            }
-        }
-    })
     def delete(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', type=int, required=True)
@@ -257,12 +155,10 @@ class GenerateToken(Resource):
             "aud": []
         }
         
-        # Create a token
         token = jwt.encode(user_payload, app.config['JWT_SECRET_KEY'], algorithm='HS256')
         return jsonify({'token': token})
 
 
-# Add your routes
 api.add_resource(User, '/api/')
 api.add_resource(Projects, '/api/projects/')
 api.add_resource(GenerateToken, '/api/generate-token')

@@ -6,6 +6,7 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     pid = db.Column(db.String(255), nullable=False)
+    group = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False)
     owner_id = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -16,6 +17,7 @@ class Project(db.Model):
             'id': self.id,
             'title': self.title,
             'pid': self.pid,
+            'group': self.group,
             'description': self.description,
             'owner_id': self.owner_id,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
