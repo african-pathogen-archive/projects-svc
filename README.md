@@ -19,6 +19,7 @@ flask db migrate -m "Run migrations"
 flask db upgrade
 ```
 Should be accessible on `http://localhost:5000`
+Swagger is available at: `http://localhost:5000/swagger/`
 
 ## UI Sandbox
 
