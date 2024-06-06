@@ -33,4 +33,6 @@ Shoud be accessible on `http://localhost:1234`
 
 ## JWT Token
 
-Currently the generated token needs to be manually saved as a cookie...todo.
+Projects Service's currently uses its own cookie - this will be replaced with the one from Ego later, but can currently be generated through the UI.
+
+A valid JWT from Ego is still needed (to call groups endpoint) and needs to be manually added as EGOJWT cookie
