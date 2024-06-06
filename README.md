@@ -1,5 +1,8 @@
 # SANBI Projects Service
 
+The Projects Service limits creation of projects to certain groups through Ego authorization.
+Project creation allows the project administrator to provide the details and, crucially, **the group** for a project. 
+
 ## Get Started
 
 ```
