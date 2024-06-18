@@ -7,7 +7,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from flask_restful_swagger_2 import Api as SwaggerApi, swagger
 from flask_cors import CORS
 from config import Config
-from models import db, Project
+from models import db, Project, Pathogen, Study
 import jwt
 import datetime
 
@@ -40,9 +40,18 @@ class User(Resource):
     def get(self):
         claims = get_jwt() 
         return claims
-    
+
 class Projects(Resource):
-    
+
+    @swagger.doc({
+        'tags': ['projects'],
+        'description': 'Get all projects',
+        'responses': {
+            '200': {
+                'description': 'List of projects'
+            }
+        }
+    })
     def get(self):
         projects = Project.query.all()
         project_list = []
@@ -61,6 +70,45 @@ class Projects(Resource):
         return project_list
     
     @jwt_required()
+    @swagger.doc({
+        'tags': ['projects'],
+        'description': 'Create a new project',
+        'parameters': [
+            {
+                'name': 'title',
+                'description': 'Project title',
+                'in': 'formData',
+                'type': 'string',
+                'required': True
+            },
+            {
+                'name': 'pid',
+                'description': 'Project ID',
+                'in': 'formData',
+                'type': 'string',
+                'required': True
+            },
+            {
+                'name': 'group',
+                'description': 'Project group',
+                'in': 'formData',
+                'type': 'string',
+                'required': True
+            },
+            {
+                'name': 'description',
+                'description': 'Project description',
+                'in': 'formData',
+                'type': 'string',
+                'required': True
+            }
+        ],
+        'responses': {
+            '201': {
+                'description': 'Project created'
+            }
+        }
+    })
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('title', required=True)
@@ -83,6 +131,53 @@ class Projects(Resource):
 
         return new_project.as_dict(), 201
 
+    @jwt_required()
+    @swagger.doc({
+        'tags': ['projects'],
+        'description': 'Update a project',
+        'parameters': [
+            {
+                'name': 'id',
+                'description': 'Project ID',
+                'in': 'formData',
+                'type': 'integer',
+                'required': True
+            },
+            {
+                'name': 'title',
+                'description': 'Project title',
+                'in': 'formData',
+                'type': 'string',
+                'required': False
+            },
+            {
+                'name': 'pid',
+                'description': 'Project ID',
+                'in': 'formData',
+                'type': 'string',
+                'required': False
+            },
+            {
+                'name': 'group',
+                'description': 'Project group',
+                'in': 'formData',
+                'type': 'string',
+                'required': False
+            },
+            {
+                'name': 'description',
+                'description': 'Project description',
+                'in': 'formData',
+                'type': 'string',
+                'required': False
+            }
+        ],
+        'responses': {
+            '200': {
+                'description': 'Project updated'
+            }
+        }
+    })
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', type=int, required=True)
@@ -109,6 +204,25 @@ class Projects(Resource):
 
         return project.as_dict(), 200
     
+    @jwt_required()
+    @swagger.doc({
+        'tags': ['projects'],
+        'description': 'Delete a project',
+        'parameters': [
+            {
+                'name': 'id',
+                'description': 'Project ID',
+                'in': 'formData',
+                'type': 'integer',
+                'required': True
+            }
+        ],
+        'responses': {
+            '204': {
+                'description': 'Project deleted'
+            }
+        }
+    })
     def delete(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', type=int, required=True)
@@ -122,6 +236,64 @@ class Projects(Resource):
         db.session.commit()
 
         return {}, 204
+    
+class Pathogens(Resource):
+
+    @swagger.doc({
+        'tags': ['pathogens'],
+        'description': 'Get all pathogens',
+        'responses': {
+            '200': {
+                'description': 'List of pathogens'
+            }
+        }
+    })
+    def get(self):
+        pathogens = Pathogen.query.all()
+        pathogen_list = []
+        for pathogen in pathogens:
+            pathogen_data = {
+                'id': pathogen.id,
+                'common_name': pathogen.common_name,
+                'scientific_name': pathogen.scientific_name,
+                'schema': pathogen.schema,
+                'created_at': pathogen.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'updated_at': pathogen.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            }
+            pathogen_list.append(pathogen_data)
+        return pathogen_list
+    
+    def post(self):
+        pass
+    
+    def put(self):
+        pass
+    
+    def delete(self):
+        pass
+
+class Studies(Resource):
+
+    @swagger.doc({
+        'tags': ['studies'],
+        'description': 'Get all studies',
+        'responses': {
+            '200': {
+                'description': 'List of studies'
+            }
+        }
+    })
+    def get(self):
+        pass
+    
+    def post(self):
+        pass
+    
+    def put(self):
+        pass
+    
+    def delete(self):
+        pass
     
 class GenerateToken(Resource):
     def get(self):
@@ -161,6 +333,8 @@ class GenerateToken(Resource):
 
 api.add_resource(User, '/api/')
 api.add_resource(Projects, '/api/projects/')
+api.add_resource(Pathogens, '/api/pathogens/')
+api.add_resource(Studies, '/api/studies/')
 api.add_resource(GenerateToken, '/api/generate-token')
 
 
