@@ -6,8 +6,9 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     pid = db.Column(db.String(255), nullable=False)
+    pathogen_id = db.Column(db.Integer, db.ForeignKey('pathogen.id'), nullable=False)
     group = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=True)
     owner_id = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
@@ -17,6 +18,7 @@ class Project(db.Model):
             'id': self.id,
             'title': self.title,
             'pid': self.pid,
+            'pathogen_id': self.pathogen_id,
             'group': self.group,
             'description': self.description,
             'owner_id': self.owner_id,
@@ -28,7 +30,7 @@ class Pathogen(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     common_name = db.Column(db.String(255), nullable=False)
     scientific_name = db.Column(db.String(255), nullable=False)
-    schema = db.Column(db.Text, nullable=True)
+    schema = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
