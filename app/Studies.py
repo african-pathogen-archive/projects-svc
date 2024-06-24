@@ -8,6 +8,8 @@ from song import create_song_study, get_song_studies
 from ego import new_ego_group, new_ego_policy, add_policy_to_group, add_user_to_group, get_ego_group
 
 class Studies(Resource):
+
+    @jwt_required()
     def get(self):
         studies = Study.query.all()
         studies_list = []
@@ -36,8 +38,8 @@ class Studies(Resource):
 
         # is the user a member of the admin group?
         claims = get_jwt()
-        if not admin_group['id'] in claims['context']['groups']:
-            return {'message': 'You do not have the required permissions to create a study'}, 401
+        if not admin_group['id'] in claims['context']['user']['groups']:
+            return {'message': 'You do not have the required permissions to create a study. Looking for ' + admin_group['id']}, 401
         
         data = request.get_json()
 
@@ -45,7 +47,7 @@ class Studies(Resource):
         info = data.get('info')
         name = data.get('name')
         organization = data.get('organization')
-        study_id = data.get('studyId')
+        study_id = description.replace(' ', '_').upper()
 
         if not (study_id):
             return {'message': 'Required Fields: Study ID'}, 400
@@ -56,7 +58,7 @@ class Studies(Resource):
             return {'message': 'Error getting studies from song'}, 500
         
         for song_study in song_studies:
-            if song_study['studyId'] == study_id:
+            if song_study == study_id:
                 return {'message': 'Study already exists'}, 400
             
         # create the study in song

@@ -7,6 +7,8 @@ from models import db, Project
 from ego import new_ego_group, new_ego_policy, add_policy_to_group, add_user_to_group
 
 class Projects(Resource):
+
+    @jwt_required()
     def get(self):
         projects = Project.query.all()
         project_list = []

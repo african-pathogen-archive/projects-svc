@@ -6,6 +6,8 @@ import datetime
 from models import db, Pathogen
 
 class Pathogens(Resource):
+
+    @jwt_required()
     def get(self):
         pathogens = Pathogen.query.all()
         pathogen_list = []
