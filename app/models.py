@@ -67,11 +67,9 @@ class Study(db.Model):
             'id': self.id,
             'study': self.study,
             'project_id': self.project_id,
-            'admin_group': self.admin_policy,
-            'member_group': self.member_policy,
+            'admin_group': self.admin_group,
+            'member_group': self.member_group,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'updated_at': self.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
             'deleted_at': self.deleted_at.strftime('%Y-%m-%d %H:%M:%S') if self.deleted_at else None
-        }
-
-   
+        }   

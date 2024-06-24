@@ -120,6 +120,19 @@ class Studies(Resource):
         if not admin_user:
             return {'message': 'Error adding user to group'}, 500
         
+        # add the study to the project
+        new_study = Study(
+            study = study_id,
+            project_id = project_id,
+            admin_group = study_admin_group['id'],
+            member_group = study_member_group['id']
+        )
+
+        db.session.add(new_study)
+        db.session.commit()
+
+        return new_study.as_dict(), 201
+        
 
     @jwt_required()
     def put(self, id):
