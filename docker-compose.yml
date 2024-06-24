@@ -7,7 +7,7 @@ services:
     environment:
       - FLASK_ENV=development
     volumes:
-      - .:/app
+      - .:/projects-service
     depends_on:
       - db
   db:

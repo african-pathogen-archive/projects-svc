@@ -1,6 +1,0 @@
-dist
-.vscode
-.parcel-cache
-node_modules
-.cache
-.env

@@ -1,7 +1,7 @@
 # SANBI Projects Service
 
-The Projects Service limits creation of projects to certain groups through Ego authorization.
-Project creation allows the project administrator to provide the details and, crucially, **the group** for a project. 
+The projects service adds pathogens, projects and user management to the studies workflow.
+
 
 ## Get Started
 
@@ -29,19 +29,6 @@ Currently the ability to edit and manage projects and pathogens is defined in `c
 PROJECT_GROUP = 'ego_group_id'
 PATHOGEN_GROUP = 'ego_group_id'
 ```
-
-## UI Sandbox
-
-A basic React App to interact with the API
-
-```
-cd ui
-yarn
-
-yarn dev
-```
-Shoud be accessible on `http://localhost:1234`
-
 
 ## JWT Token
 
