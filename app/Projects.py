@@ -36,8 +36,8 @@ class Projects(Resource):
 
             jwt_token = request.headers.get('Authorization').split()[1]
 
-            admin_group_title = title.replace(' ', '_').upper() + '_ADMIN'
-            admin_policy_title = title.replace(' ', '_').upper()
+            admin_group_title = 'P-' + title.replace(' ', '_').upper() + '_ADMIN'
+            admin_policy_title = 'P-' + title.replace(' ', '_').upper()
 
 
             # EGO WORK

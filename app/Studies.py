@@ -75,7 +75,7 @@ class Studies(Resource):
         
         # create a group in EGO for the study
         study_name = name.replace(' ', '_').upper()
-        study_name = project_group_name + '_' + study_name
+        study_name = project_group_name + '-' + study_name
 
         study_admin_group = new_ego_group({
             "name": study_name + '_ADMIN',
