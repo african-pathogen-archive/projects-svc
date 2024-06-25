@@ -11,7 +11,7 @@ WORKDIR /projects-service/app
 # Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir uvicorn
+RUN pip install --no-cache-dir gunicorn 
 
 # Copy the local code to the container image (comment this out since we're mounting the volume)
 COPY . .
@@ -20,4 +20,4 @@ COPY . .
 EXPOSE 5000
 
 # Command to run the application
-CMD ["uvicorn", "--app-dir", "/projects-service/app/app", "--port", "5000", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--chdir", "/projects-service/app/app", "app:app"]
