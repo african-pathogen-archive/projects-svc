@@ -1,685 +1,503 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "1.0.0",
-        "title": "Projects Service API",
-        "description": "Providing pathogens and projects to the Overture workflow."
+      "version": "1.0.0",
+      "title": "Projects Service API",
+      "description": "Providing pathogens and projects to the Overture workflow."
     },
     "host": "localhost:5000",
     "basePath": "/",
     "schemes": [
-        "http"
+      "http"
     ],
     "tags": [
-        {
-            "name": "Pathogen",
-            "description": "Create, Read, Update and Delete pathogens"
-        },
-        {
-            "name": "Project",
-            "description": "Create, Read, Update and Delete projects"
-        },
-        {
-            "name": "Studies",
-            "description": "Create, Read, Update and Delete study and project relationships"
-        }
+      {
+        "name": "Pathogen",
+        "description": "Create, Read, Update and Delete pathogens"
+      },
+      {
+        "name": "Project",
+        "description": "Create, Read, Update and Delete projects"
+      },
+      {
+        "name": "Studies",
+        "description": "Create, Read, Update and Delete study and project relationships"
+      }
     ],
     "paths": {
-        "/pathogens": {
-            "get": {
-                "tags": [
-                    "Pathogen"
-                ],
-                "summary": "Retrieve all pathogens",
-                "description": "Fetches a list of all pathogens from the database.",
-                "responses": {
-                    "200": {
-                        "description": "A list of pathogens",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Pathogen"
-                                    }
-                                }
-                            }
-                        }
-                    }
+      "/api/pathogens": {
+        "get": {
+          "tags": ["Pathogen"],
+          "summary": "Get all pathogens",
+          "operationId": "getPathogens",
+          "responses": {
+            "200": {
+              "description": "A list of pathogens"
+            }
+          }
+        },
+        "post": {
+          "tags": ["Pathogen"],
+          "summary": "Create a new pathogen",
+          "operationId": "createPathogen",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "common_name": {"type": "string"},
+                  "scientific_name": {"type": "string"},
+                  "schema": {"type": "string"},
+                  "schema_version": {"type": "string"}
                 }
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Pathogen created"
             },
-            "post": {
-                "tags": [
-                    "Pathogen"
-                ],
-                "summary": "Create a new pathogen",
-                "description": "Creates a new pathogen if the user has the required permissions.",
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PathogenInput"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Pathogen created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Pathogen"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input or pathogen already exists",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/pathogens/{id}": {
-            "put": {
-                "tags": [
-                    "Pathogen"
-                ],
-                "summary": "Update a pathogen",
-                "description": "Updates the details of an existing pathogen if the user has the required permissions.",
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PathogenInput"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Pathogen updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Pathogen"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Pathogen not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
+            "400": {
+              "description": "Required Fields: Common name and Scientific name"
             },
-            "delete": {
-                "tags": [
-                    "Pathogen"
-                ],
-                "summary": "Delete a pathogen",
-                "description": "Marks a pathogen as deleted if the user has the required permissions.",
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Pathogen deleted successfully"
-                    },
-                    "404": {
-                        "description": "Pathogen not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
+            "401": {
+              "description": "You do not have the required permissions to create a pathogen"
             }
-        },
-        "/projects": {
-            "get": {
-                "tags": [
-                    "Project"
-                ],
-                "summary": "Retrieve all projects",
-                "description": "Fetches a list of all projects from the database.",
-                "responses": {
-                    "200": {
-                        "description": "A list of projects",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Project"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "Project"
-                ],
-                "summary": "Create a new project",
-                "description": "Creates a new project if the user has the required permissions.",
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ProjectInput"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Project created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Project"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input or project already exists",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Error creating admin group or policy",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/projects/{id}": {
-            "put": {
-                "tags": [
-                    "Project"
-                ],
-                "summary": "Update a project",
-                "description": "Updates the details of an existing project if the user has the required permissions.",
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ProjectInput"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Project updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Project"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Project not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Project"
-                ],
-                "summary": "Delete a project",
-                "description": "Marks a project as deleted if the user has the required permissions.",
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Project deleted successfully"
-                    },
-                    "404": {
-                        "description": "Project not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/studies": {
-            "get": {
-                "tags": [
-                    "Studies"
-                ],
-                "summary": "Retrieve all studies",
-                "description": "Fetches a list of all studies from the database.",
-                "responses": {
-                    "200": {
-                        "description": "A list of studies",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Study"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/studies/{project_id}": {
-            "post": {
-                "tags": [
-                    "Studies"
-                ],
-                "summary": "Create a new study",
-                "description": "Creates a new study if the user has the required permissions.",
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "project_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/StudyInput"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Study created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Study"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input or study already exists",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Project or admin group not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Error creating admin group, member group, or policies",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "components": {
-            "schemas": {
-                "Pathogen": {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "integer"
-                        },
-                        "common_name": {
-                            "type": "string"
-                        },
-                        "scientific_name": {
-                            "type": "string"
-                        },
-                        "schema": {
-                            "type": "string"
-                        },
-                        "schema_version": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "PathogenInput": {
-                    "type": "object",
-                    "properties": {
-                        "common_name": {
-                            "type": "string"
-                        },
-                        "scientific_name": {
-                            "type": "string"
-                        },
-                        "schema": {
-                            "type": "string"
-                        },
-                        "schema_version": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "common_name",
-                        "scientific_name"
-                    ]
-                },
-                "Project": {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "integer"
-                        },
-                        "title": {
-                            "type": "string"
-                        },
-                        "pid": {
-                            "type": "string"
-                        },
-                        "pathogen_id": {
-                            "type": "integer"
-                        },
-                        "admin_group": {
-                            "type": "string"
-                        },
-                        "description": {
-                            "type": "string"
-                        },
-                        "owner": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "ProjectInput": {
-                    "type": "object",
-                    "properties": {
-                        "title": {
-                            "type": "string"
-                        },
-                        "pid": {
-                            "type": "string"
-                        },
-                        "pathogen_id": {
-                            "type": "integer"
-                        },
-                        "description": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "title",
-                        "pid",
-                        "pathogen_id"
-                    ]
-                },
-                "Study": {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "integer"
-                        },
-                        "studyId": {
-                            "type": "string"
-                        },
-                        "name": {
-                            "type": "string"
-                        },
-                        "description": {
-                            "type": "string"
-                        },
-                        "info": {
-                            "type": "string"
-                        },
-                        "organization": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "StudyInput": {
-                    "type": "object",
-                    "properties": {
-                        "studyId": {
-                            "type": "string"
-                        },
-                        "name": {
-                            "type": "string"
-                        },
-                        "description": {
-                            "type": "string"
-                        },
-                        "info": {
-                            "type": "string"
-                        },
-                        "organization": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "studyId"
-                    ]
-                },
-                "Error": {
-                    "type": "object",
-                    "properties": {
-                        "message": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "securitySchemes": {
-                "bearerAuth": {
-                    "type": "http",
-                    "scheme": "bearer",
-                    "bearerFormat": "JWT"
-                }
-            }
+          }
         }
+      },
+      "/api/pathogens/{id}": {
+        "put": {
+          "tags": ["Pathogen"],
+          "summary": "Update a pathogen",
+          "operationId": "updatePathogen",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "common_name": {"type": "string"},
+                  "scientific_name": {"type": "string"},
+                  "schema": {"type": "string"},
+                  "schema_version": {"type": "string"}
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Pathogen updated"
+            },
+            "404": {
+              "description": "Pathogen not found"
+            },
+            "401": {
+              "description": "You do not have the required permissions to update this pathogen"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Pathogen"],
+          "summary": "Delete a pathogen",
+          "operationId": "deletePathogen",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Pathogen deleted"
+            },
+            "404": {
+              "description": "Pathogen not found"
+            },
+            "401": {
+              "description": "You do not have the required permissions to delete this pathogen"
+            }
+          }
+        }
+      },
+      "/api/projects": {
+        "get": {
+          "tags": ["Project"],
+          "summary": "Get all projects",
+          "operationId": "getProjects",
+          "responses": {
+            "200": {
+              "description": "A list of projects"
+            }
+          }
+        },
+        "post": {
+          "tags": ["Project"],
+          "summary": "Create a new project",
+          "operationId": "createProject",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string"},
+                  "pid": {"type": "string"},
+                  "pathogen_id": {"type": "string"},
+                  "description": {"type": "string"}
+                }
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Project created"
+            },
+            "400": {
+              "description": "Required Fields: Title, PID, Pathogen ID, Admin Group"
+            },
+            "401": {
+              "description": "You do not have the required permissions to create a project"
+            }
+          }
+        }
+      },
+      "/api/projects/{id}": {
+        "get": {
+          "tags": ["Project"],
+          "summary": "Get a project",
+          "operationId": "getProject",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A project"
+            },
+            "404": {
+              "description": "Project not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["Project"],
+          "summary": "Update a project",
+          "operationId": "updateProject",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string"},
+                  "pid": {"type": "string"},
+                  "pathogen_id": {"type": "string"},
+                  "description": {"type": "string"}
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Project updated"
+            },
+            "404": {
+              "description": "Project not found"
+            },
+            "401": {
+              "description": "You do not have the required permissions to update this project"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Project"],
+          "summary": "Delete a project",
+          "operationId": "deleteProject",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Project deleted"
+            },
+            "404": {
+              "description": "Project not found"
+            },
+            "401": {
+              "description": "You do not have the required permissions to delete this project"
+            }
+          }
+        }
+      },
+      "/api/projects/{id}/users/{user_id}": {
+        "post": {
+          "tags": ["Project"],
+          "summary": "Add a user to a project",
+          "operationId": "addUserToProject",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "user_id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "User added to project"
+            },
+            "404": {
+              "description": "Project not found"
+            },
+            "401": {
+              "description": "You do not have the required permissions to add a user to this project"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Project"],
+          "summary": "Remove a user from a project",
+          "operationId": "removeUserFromProject",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "user_id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "User removed from project"
+            },
+            "404": {
+              "description": "Project not found"
+            },
+            "401": {
+              "description": "You do not have the required permissions to manage users of this project"
+            },
+            "400": {
+              "description": "Cannot remove the last user from a project"
+            }
+          }
+        }
+      },
+      "/api/studies": {
+        "get": {
+          "tags": ["Studies"],
+          "summary": "Get all studies",
+          "operationId": "getStudies",
+          "responses": {
+            "200": {
+              "description": "A list of studies"
+            }
+          }
+        },
+        "post": {
+          "tags": ["Studies"],
+          "summary": "Create a new study",
+          "operationId": "createStudy",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "project_id": {"type": "string"},
+                  "description": {"type": "string"},
+                  "info": {"type": "string"},
+                  "name": {"type": "string"},
+                  "organization": {"type": "string"}
+                }
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Study created"
+            },
+            "400": {
+              "description": "Required Fields: Study ID"
+            },
+            "401": {
+              "description": "You do not have the required permissions to create a study"
+            },
+            "500": {
+              "description": "Error creating study"
+            }
+          }
+        }
+      },
+      "/api/studies/{study_id}": {
+        "get": {
+          "tags": ["Studies"],
+          "summary": "Get a study",
+          "operationId": "getStudy",
+          "parameters": [
+            {
+              "name": "study_id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A study"
+            },
+            "404": {
+              "description": "Study not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Studies"],
+          "summary": "Delete a study",
+          "operationId": "deleteStudy",
+          "parameters": [
+            {
+              "name": "study_id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Study deleted"
+            },
+            "404": {
+              "description": "Study not found"
+            },
+            "401": {
+              "description": "You do not have the required permissions to delete this study"
+            }
+          }
+        }
+      },
+      "/api/studies/{study_id}/users/{user_id}": {
+        "delete": {
+          "tags": ["Studies"],
+          "summary": "Remove a user from a study",
+          "operationId": "removeUserFromStudy",
+          "parameters": [
+            {
+              "name": "study_id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "user_id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "User removed from study"
+            },
+            "404": {
+              "description": "Study not found"
+            },
+            "401": {
+              "description": "You do not have the required permissions to manage users for this study"
+            },
+            "500": {
+              "description": "Error removing user from group"
+            }
+          }
+        }
+      },
+      "/api/studies/{study_id}/users/{user_id}/{role}": {
+        "post": {
+          "tags": ["Studies"],
+          "summary": "Add a user to a study. Role can be 'admin' or 'member'",
+          "operationId": "addUserToStudyWithRole",
+          "parameters": [
+            {
+              "name": "study_id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "user_id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "role",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "User added to study"
+            },
+            "404": {
+              "description": "Study not found"
+            },
+            "401": {
+              "description": "You do not have the required permissions to manage users for this study"
+            },
+            "500": {
+              "description": "Error adding user to group"
+            }
+          }
+        }
+      }
     }
-}
+  }
+  

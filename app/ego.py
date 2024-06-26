@@ -90,6 +90,25 @@ def add_user_to_group(group_id, user, jwt_token):
             return {'message': f"Error adding user to group: {e}"}, 500
         
 @jwt_required()
+def remove_user_from_group(group_id, user, jwt_token):
+    
+    if not jwt_token:
+        return {'message': 'JWT token is not available'}, 401
+    
+    try:
+        headers = {'Authorization': f'Bearer {jwt_token}'}
+        response = requests.delete(Config.EGO_API + f'/groups/{group_id}/users/{user}', headers=headers)
+        response.raise_for_status()
+
+        return response.json()
+    
+    except requests.exceptions.RequestException as e:
+        if e.response:
+            return e.response.json()
+        else:
+            return {'message': f"Error removing user from group: {e}"}, 500
+        
+@jwt_required()
 def get_ego_group(group_id, jwt_token):
     
     if not jwt_token:
@@ -127,3 +146,21 @@ def get_ego_policy(policy_id, jwt_token):
         else:
             return {'message': f"Error getting policy: {e}"}, 500
         
+@jwt_required()
+def get_ego_group_users(group_id, jwt_token):
+    
+    if not jwt_token:
+        return {'message': 'JWT token is not available'}, 401
+    
+    try:
+        headers = {'Authorization': f'Bearer {jwt_token}'}
+        response = requests.get(Config.EGO_API + f'/groups/{group_id}/users', headers=headers)
+        response.raise_for_status()
+
+        return response.json()
+    
+    except requests.exceptions.RequestException as e:
+        if e.response:
+            return e.response.json()
+        else:
+            return {'message': f"Error getting group users: {e}"}, 500

@@ -46,9 +46,21 @@ api = SwaggerApi(app, api_version='0.1', api_spec_url=SWAGGER_URL)
 
 ### ROUTES
 
-api.add_resource(Pathogens, '/api/pathogens','/api/pathogens/<string:id>')
-api.add_resource(Projects, '/api/projects', '/api/projects/<string:id>')
-api.add_resource(Studies, '/api/studies', '/api/studies/<string:project_id>')
+api.add_resource(Pathogens, 
+    '/api/pathogens',
+    '/api/pathogens/<string:id>'
+)
+api.add_resource(Projects, 
+    '/api/projects',
+    '/api/projects/<string:id>',
+    '/api/projects/<string:id>/users/<string:user_id>'
+)
+api.add_resource(Studies, 
+    '/api/studies',
+    '/api/studies/<string:study_id>',
+    '/api/studies/<string:study_id>/users/<string:user_id>',
+    '/api/studies/<string:study_id>/users/<string:user_id>/<string:role>'
+)
 
 
 

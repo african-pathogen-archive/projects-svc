@@ -64,9 +64,9 @@ class Study(db.Model):
 
     def as_dict(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'study': self.study,
-            'project_id': self.project_id,
+            'project_id': str(self.project_id),
             'admin_group': self.admin_group,
             'member_group': self.member_group,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
