@@ -44,6 +44,7 @@ app.register_blueprint(swaggerui_blueprint, url_prefix = SWAGGER_URL)
 
 api = SwaggerApi(app, api_version='0.1', api_spec_url=SWAGGER_URL)
 
+
 ### ROUTES
 
 api.add_resource(Pathogens, 
@@ -63,6 +64,13 @@ api.add_resource(Studies,
 )
 
 
+### DUMMY ROUTE
+# A dummy route to test various function
+
+@app.route('/sandpit')
+@jwt_required()
+def sandpit():
+    return 'play around here'
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
