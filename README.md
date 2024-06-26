@@ -34,18 +34,7 @@ PATHOGEN_GROUP = 'ego_group_id'
 
 ### Projects
 
-A project is a pathogen related grouping of studies:
-
-```json
-{
-    "title": "Project name",
-    "pid": "Project identifier",
-    "pathogen_id": "Required Pathogen ID",
-    "description": "Project description"
-}
-```
-
-A project requires a valid, existing `pathogen_id`.
+A project is a pathogen related grouping of studies. A project requires a valid, existing `pathogen_id`.
 
 This endpoint will also create a EGO admin group and policy and add it to the project.
 
@@ -55,7 +44,7 @@ A pathogen and related schema. Projects require a pathogen
 
 ### Studies
 
-When studies are created through the projects-service, they are recorded in the studies table as part of a project. EGO admin groups and member groups and policies are automatically created.
+When studies are created through the projects-service, they are recorded in the studies table as part of a project. EGO admin groups, member groups and policies are automatically created.
 
 
 ## JWT Token
