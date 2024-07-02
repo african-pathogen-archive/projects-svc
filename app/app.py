@@ -73,7 +73,6 @@ api.add_resource(Studies,
 # A dummy route to test various function
 
 @app.route('/sandpit')
-@jwt_required()
 def sandpit():
     return 'play around here'
 
