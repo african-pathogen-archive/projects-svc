@@ -1,3 +1,4 @@
+import os
 import requests
 from config import Config
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -11,6 +12,15 @@ def get_public_key():
         return public_key
     except requests.exceptions.RequestException as e:
         print(f"Error fetching public key: {e}")
+        return None
+    
+def get_application_token():
+    try:
+        response = requests.post(Config.EGO_API + f'/oauth/token?client_id=projects-svc&client_secret={os.getenv('PROJECTS_SVC_SECRET')}&grant_type=client_credentials')
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching application token: {e}")
         return None
     
 @jwt_required()
@@ -164,3 +174,27 @@ def get_ego_group_users(group_id, jwt_token):
             return e.response.json()
         else:
             return {'message': f"Error getting group users: {e}"}, 500
+        
+@jwt_required()
+def is_user_in_group(group_id, user_id, jwt_token):
+    
+    if not jwt_token:
+        return {'message': 'JWT token is not available'}, 401
+    
+    try:
+        headers = {'Authorization': f'Bearer {jwt_token}'}
+        response = requests.get(Config.EGO_API + f'/groups/{group_id}/users', headers=headers)
+        response.raise_for_status()
+
+        users = response.json()['resultSet']
+
+        for user in users:
+            if user['id'] == user_id:
+                return True
+            return False
+    
+    except requests.exceptions.RequestException as e:
+        if e.response:
+            return e.response.json()
+        else:
+            return {'message': f"Error checking user in group: {e}"}, 500

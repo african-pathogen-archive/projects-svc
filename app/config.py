@@ -16,5 +16,9 @@ class Config:
     SONG_API = os.getenv('SONG_API', 'https://apasong.sanbi.ac.za')
     EGO_API = os.getenv('EGO_API', 'https://apaego.sanbi.ac.za/api')
 
+    PROJECTS_SVC_SECRET = os.getenv('PROJECTS_SVC_SECRET', 'projects-svc-secret')
+
     PROJECT_SCOPE = os.getenv('PROJECT_SCOPE', 'PROJECTS-SERVICE.WRITE')
     PATHOGEN_SCOPE = os.getenv('PATHOGEN_SCOPE', 'PROJECTS-SERVICE.WRITE')
+
+    CORS_ORIGINS = os.getenv('CORS_ORIGINS', '*')

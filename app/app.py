@@ -3,6 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_restful_swagger_2 import Api as SwaggerApi
+from flask_cors import CORS
 from config import Config
 from models import db
 import os
@@ -15,6 +16,10 @@ from ego import get_public_key
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+### CORS
+
+CORS(app, resources={r"/api/*": {"origins": Config.CORS_ORIGINS, "methods": ["GET", "POST", "PUT", "DELETE"]}})
 
 ### DB
 
@@ -44,6 +49,7 @@ app.register_blueprint(swaggerui_blueprint, url_prefix = SWAGGER_URL)
 
 api = SwaggerApi(app, api_version='0.1', api_spec_url=SWAGGER_URL)
 
+
 ### ROUTES
 
 api.add_resource(Pathogens, 
@@ -63,6 +69,13 @@ api.add_resource(Studies,
 )
 
 
+### DUMMY ROUTE
+# A dummy route to test various function
+
+@app.route('/sandpit')
+@jwt_required()
+def sandpit():
+    return 'play around here'
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
