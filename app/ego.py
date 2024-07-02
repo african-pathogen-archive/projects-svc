@@ -16,7 +16,7 @@ def get_public_key():
     
 def get_application_token():
     try:
-        response = requests.post(Config.EGO_API + f'/oauth/token?client_id=projects-svc&client_secret={os.getenv('PROJECTS_SVC_SECRET')}&grant_type=client_credentials')
+        response = requests.post(Config.EGO_API + f'/oauth/token?client_id=projects-svc&client_secret={Config.PROJECTS_SVC_SECRET}&grant_type=client_credentials')
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
