@@ -4,10 +4,11 @@ from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt
 import datetime
 from models import db, Pathogen
+from ego import get_ego_group_users, get_application_token, is_user_in_group
+
 
 class Pathogens(Resource):
 
-    @jwt_required()
     def get(self):
         pathogens = Pathogen.query.all()
         pathogen_list = []
