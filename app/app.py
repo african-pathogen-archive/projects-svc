@@ -101,22 +101,7 @@ def handle_exception(e):
 @app.route('/sandpit')
 @jwt_required()
 def sandpit():
-    try:
-        user_id = get_jwt_identity()
-        jwt_token = get_application_token()
-        if not jwt_token:
-            abort(401, 'JWT token is not available')
-
-        if not user_in_group('f59966e5-d833-4209-9615-72e78edd7b75', '36725cc5-0c86-4374-a2a2-4217911839f8', jwt_token):
-            return jsonify({'message': 'no'})
-        else:
-            return jsonify({'message': 'yes'})
-
-        
-        
-    except Exception as e:
-        raise e
-
+    return {'message': 'Experimental endpoint'}
 
 
 if __name__ == '__main__':

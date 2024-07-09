@@ -1,503 +1,538 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "version": "1.0.0",
-      "title": "Projects Service API",
-      "description": "Providing pathogens and projects to the Overture workflow."
-    },
-    "host": "localhost:5000",
-    "basePath": "/",
-    "schemes": [
-      "http"
-    ],
-    "tags": [
-      {
-        "name": "Pathogen",
-        "description": "Create, Read, Update and Delete pathogens"
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Projects Service API",
+    "description": "Adding pathogens and projects to the Overture workflow."
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "tags": [
+    {
+      "name": "Pathogen",
+      "description": "Create, Read, Update and Delete pathogens"
+    }
+  ],
+  "paths": {
+    "/api/pathogens": {
+      "get": {
+        "tags": ["Pathogen"],
+        "summary": "Get all pathogens",
+        "operationId": "getPathogens",
+        "responses": {
+          "200": {
+            "description": "A list of pathogens"
+          }
+        }
       },
-      {
-        "name": "Project",
-        "description": "Create, Read, Update and Delete projects"
-      },
-      {
-        "name": "Studies",
-        "description": "Create, Read, Update and Delete study and project relationships"
+      "post": {
+        "tags": ["Pathogen"],
+        "summary": "Create a new pathogen",
+        "operationId": "createPathogen",
+        "parameters": [
+          {
+            "name": "pathogen",
+            "in": "body",
+            "description": "Pathogen object to be created",
+            "schema": {
+              "$ref": "#/definitions/Pathogen"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Pathogen created"
+          }
+        }
       }
-    ],
-    "paths": {
-      "/api/pathogens": {
-        "get": {
-          "tags": ["Pathogen"],
-          "summary": "Get all pathogens",
-          "operationId": "getPathogens",
-          "responses": {
-            "200": {
-              "description": "A list of pathogens"
-            }
+    },
+    "/api/pathogens/{id}": {
+      "get": {
+        "tags": ["Pathogen"],
+        "summary": "Get a pathogen by ID",
+        "operationId": "getPathogenById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
-        },
-        "post": {
-          "tags": ["Pathogen"],
-          "summary": "Create a new pathogen",
-          "operationId": "createPathogen",
-          "parameters": [
-            {
-              "name": "body",
-              "in": "body",
-              "required": true,
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "common_name": {"type": "string"},
-                  "scientific_name": {"type": "string"},
-                  "schema": {"type": "string"},
-                  "schema_version": {"type": "string"}
-                }
-              }
-            }
-          ],
-          "responses": {
-            "201": {
-              "description": "Pathogen created"
-            },
-            "400": {
-              "description": "Required Fields: Common name and Scientific name"
-            },
-            "401": {
-              "description": "You do not have the required permissions to create a pathogen"
-            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pathogen details"
+          },
+          "404": {
+            "description": "Pathogen not found"
           }
         }
       },
-      "/api/pathogens/{id}": {
-        "put": {
-          "tags": ["Pathogen"],
-          "summary": "Update a pathogen",
-          "operationId": "updatePathogen",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "body",
-              "in": "body",
-              "required": true,
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "common_name": {"type": "string"},
-                  "scientific_name": {"type": "string"},
-                  "schema": {"type": "string"},
-                  "schema_version": {"type": "string"}
-                }
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Pathogen updated"
-            },
-            "404": {
-              "description": "Pathogen not found"
-            },
-            "401": {
-              "description": "You do not have the required permissions to update this pathogen"
+      "put": {
+        "tags": ["Pathogen"],
+        "summary": "Update a pathogen by ID",
+        "operationId": "updatePathogen",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pathogen",
+            "in": "body",
+            "description": "Updated pathogen object",
+            "schema": {
+              "$ref": "#/definitions/Pathogen"
             }
           }
-        },
-        "delete": {
-          "tags": ["Pathogen"],
-          "summary": "Delete a pathogen",
-          "operationId": "deletePathogen",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": "Pathogen deleted"
-            },
-            "404": {
-              "description": "Pathogen not found"
-            },
-            "401": {
-              "description": "You do not have the required permissions to delete this pathogen"
-            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pathogen updated"
+          },
+          "404": {
+            "description": "Pathogen not found"
           }
         }
       },
-      "/api/projects": {
-        "get": {
-          "tags": ["Project"],
-          "summary": "Get all projects",
-          "operationId": "getProjects",
-          "responses": {
-            "200": {
-              "description": "A list of projects"
-            }
+      "delete": {
+        "tags": ["Pathogen"],
+        "summary": "Delete a pathogen by ID",
+        "operationId": "deletePathogen",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
-        },
-        "post": {
-          "tags": ["Project"],
-          "summary": "Create a new project",
-          "operationId": "createProject",
-          "parameters": [
-            {
-              "name": "body",
-              "in": "body",
-              "required": true,
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {"type": "string"},
-                  "pid": {"type": "string"},
-                  "pathogen_id": {"type": "string"},
-                  "description": {"type": "string"}
-                }
-              }
-            }
-          ],
-          "responses": {
-            "201": {
-              "description": "Project created"
-            },
-            "400": {
-              "description": "Required Fields: Title, PID, Pathogen ID, Admin Group"
-            },
-            "401": {
-              "description": "You do not have the required permissions to create a project"
-            }
+        ],
+        "responses": {
+          "204": {
+            "description": "Pathogen deleted"
+          },
+          "404": {
+            "description": "Pathogen not found"
+          }
+        }
+      }
+    },
+    "/api/projects": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "Get all projects",
+        "operationId": "getProjects",
+        "responses": {
+          "200": {
+            "description": "A list of projects"
           }
         }
       },
-      "/api/projects/{id}": {
-        "get": {
-          "tags": ["Project"],
-          "summary": "Get a project",
-          "operationId": "getProject",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "A project"
-            },
-            "404": {
-              "description": "Project not found"
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "Create a new project",
+        "operationId": "createProject",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "body",
+            "description": "Project object to be created",
+            "schema": {
+              "$ref": "#/definitions/Project"
             }
           }
-        },
-        "put": {
-          "tags": ["Project"],
-          "summary": "Update a project",
-          "operationId": "updateProject",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "body",
-              "in": "body",
-              "required": true,
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {"type": "string"},
-                  "pid": {"type": "string"},
-                  "pathogen_id": {"type": "string"},
-                  "description": {"type": "string"}
-                }
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Project updated"
-            },
-            "404": {
-              "description": "Project not found"
-            },
-            "401": {
-              "description": "You do not have the required permissions to update this project"
-            }
+        ],
+        "responses": {
+          "201": {
+            "description": "Project created"
           }
-        },
-        "delete": {
-          "tags": ["Project"],
-          "summary": "Delete a project",
-          "operationId": "deleteProject",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": "Project deleted"
-            },
-            "404": {
-              "description": "Project not found"
-            },
-            "401": {
-              "description": "You do not have the required permissions to delete this project"
-            }
+        }
+      }
+    },
+    "/api/projects/{id}": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "Get a project by ID",
+        "operationId": "getProjectById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project details"
+          },
+          "404": {
+            "description": "Project not found"
           }
         }
       },
-      "/api/projects/{id}/users/{user_id}": {
-        "post": {
-          "tags": ["Project"],
-          "summary": "Add a user to a project",
-          "operationId": "addUserToProject",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "user_id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "responses": {
-            "201": {
-              "description": "User added to project"
-            },
-            "404": {
-              "description": "Project not found"
-            },
-            "401": {
-              "description": "You do not have the required permissions to add a user to this project"
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "Update a project by ID",
+        "operationId": "updateProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "project",
+            "in": "body",
+            "description": "Updated project object",
+            "schema": {
+              "$ref": "#/definitions/Project"
             }
           }
-        },
-        "delete": {
-          "tags": ["Project"],
-          "summary": "Remove a user from a project",
-          "operationId": "removeUserFromProject",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "user_id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": "User removed from project"
-            },
-            "404": {
-              "description": "Project not found"
-            },
-            "401": {
-              "description": "You do not have the required permissions to manage users of this project"
-            },
-            "400": {
-              "description": "Cannot remove the last user from a project"
-            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project updated"
+          },
+          "404": {
+            "description": "Project not found"
           }
         }
       },
-      "/api/studies": {
-        "get": {
-          "tags": ["Studies"],
-          "summary": "Get all studies",
-          "operationId": "getStudies",
-          "responses": {
-            "200": {
-              "description": "A list of studies"
-            }
+      "delete": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "Delete a project by ID",
+        "operationId": "deleteProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
-        },
-        "post": {
-          "tags": ["Studies"],
-          "summary": "Create a new study",
-          "operationId": "createStudy",
-          "parameters": [
-            {
-              "name": "body",
-              "in": "body",
-              "required": true,
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "project_id": {"type": "string"},
-                  "description": {"type": "string"},
-                  "info": {"type": "string"},
-                  "name": {"type": "string"},
-                  "organization": {"type": "string"}
-                }
-              }
-            }
-          ],
-          "responses": {
-            "201": {
-              "description": "Study created"
-            },
-            "400": {
-              "description": "Required Fields: Study ID"
-            },
-            "401": {
-              "description": "You do not have the required permissions to create a study"
-            },
-            "500": {
-              "description": "Error creating study"
-            }
+        ],
+        "responses": {
+          "204": {
+            "description": "Project deleted"
+          },
+          "404": {
+            "description": "Project not found"
+          }
+        }
+      }
+    },
+    "/api/projects/{id}/users/{user_id}": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "Assign a user to a project",
+        "operationId": "assignUserToProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User assigned to project"
+          },
+          "404": {
+            "description": "Project or user not found"
           }
         }
       },
-      "/api/studies/{study_id}": {
-        "get": {
-          "tags": ["Studies"],
-          "summary": "Get a study",
-          "operationId": "getStudy",
-          "parameters": [
-            {
-              "name": "study_id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "A study"
-            },
-            "404": {
-              "description": "Study not found"
-            }
+      "delete": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "Remove a user from a project",
+        "operationId": "removeUserFromProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
-        },
-        "delete": {
-          "tags": ["Studies"],
-          "summary": "Delete a study",
-          "operationId": "deleteStudy",
-          "parameters": [
-            {
-              "name": "study_id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": "Study deleted"
-            },
-            "404": {
-              "description": "Study not found"
-            },
-            "401": {
-              "description": "You do not have the required permissions to delete this study"
-            }
+        ],
+        "responses": {
+          "204": {
+            "description": "User removed from project"
+          },
+          "404": {
+            "description": "Project or user not found"
+          }
+        }
+      }
+    },
+    "/api/studies": {
+      "get": {
+        "tags": [
+          "Study"
+        ],
+        "summary": "Get all studies",
+        "operationId": "getStudies",
+        "responses": {
+          "200": {
+            "description": "A list of studies"
           }
         }
       },
-      "/api/studies/{study_id}/users/{user_id}": {
-        "delete": {
-          "tags": ["Studies"],
-          "summary": "Remove a user from a study",
-          "operationId": "removeUserFromStudy",
-          "parameters": [
-            {
-              "name": "study_id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "user_id",
-              "in": "path",
-              "required": true,
-              "type": "string"
+      "post": {
+        "tags": [
+          "Study"
+        ],
+        "summary": "Create a new study",
+        "operationId": "createStudy",
+        "parameters": [
+          {
+            "name": "study",
+            "in": "body",
+            "description": "Study object to be created",
+            "schema": {
+              "$ref": "#/definitions/Study"
             }
-          ],
-          "responses": {
-            "204": {
-              "description": "User removed from study"
-            },
-            "404": {
-              "description": "Study not found"
-            },
-            "401": {
-              "description": "You do not have the required permissions to manage users for this study"
-            },
-            "500": {
-              "description": "Error removing user from group"
-            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Study created"
+          }
+        }
+      }
+    },
+    "/api/studies/{id}": {
+      "get": {
+        "tags": [
+          "Study"
+        ],
+        "summary": "Get a study by ID",
+        "operationId": "getStudyById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Study details"
+          },
+          "404": {
+            "description": "Study not found"
           }
         }
       },
-      "/api/studies/{study_id}/users/{user_id}/{role}": {
-        "post": {
-          "tags": ["Studies"],
-          "summary": "Add a user to a study. Role can be 'admin' or 'member'",
-          "operationId": "addUserToStudyWithRole",
-          "parameters": [
-            {
-              "name": "study_id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "user_id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "role",
-              "in": "path",
-              "required": true,
-              "type": "string"
+      "put": {
+        "tags": [
+          "Study"
+        ],
+        "summary": "Update a study by ID",
+        "operationId": "updateStudy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "study",
+            "in": "body",
+            "description": "Updated study object",
+            "schema": {
+              "$ref": "#/definitions/Study"
             }
-          ],
-          "responses": {
-            "201": {
-              "description": "User added to study"
-            },
-            "404": {
-              "description": "Study not found"
-            },
-            "401": {
-              "description": "You do not have the required permissions to manage users for this study"
-            },
-            "500": {
-              "description": "Error adding user to group"
-            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Study updated"
+          },
+          "404": {
+            "description": "Study not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Study"
+        ],
+        "summary": "Delete a study by ID",
+        "operationId": "deleteStudy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Study deleted"
+          },
+          "404": {
+            "description": "Study not found"
+          }
+        }
+      }
+    },
+    "/api/studies/{id}/users/{user_id}/{role}": {
+      "post": {
+        "tags": [
+          "Study"
+        ],
+        "summary": "Assign a user with a specific role to a study",
+        "operationId": "assignUserRoleToStudy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "role",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User role assigned to study"
+          },
+          "404": {
+            "description": "Study or user not found"
+          }
+        }
+      }
+    },
+    "/api/studies/{id}/users/{user_id}": {
+      "delete": {
+        "tags": [
+          "Study"
+        ],
+        "summary": "Remove a user from a study",
+        "operationId": "removeUserFromStudy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User removed from study"
+          },
+          "404": {
+            "description": "Study or user not found"
           }
         }
       }
     }
+  },
+  "definitions": {
+    "Pathogen": {
+      "type": "object",
+      "properties": {
+        "common_name": {
+          "type": "string"
+        },
+        "scientific_name": {
+          "type": "string"
+        },
+        "schema": {
+          "type": "string"
+        },
+        "schema_version": {
+          "type": "string"
+        }
+      }
+    },  
+      "Project": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "pid": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "pathogend_id": {
+            "type": "string"
+          }
+        }
+      },
+      "Study": {
+        "type": "object",
+        "properties": {
+          "study": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "admin_group": {
+            "type": "string"
+          },
+          "memeber_group": {
+            "type": "string"
+          }
+        }
+      }
+    
   }
-  
+}
