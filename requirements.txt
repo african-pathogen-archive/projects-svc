@@ -10,3 +10,4 @@ flask-restful-swagger-2==0.35
 flask-cors==3.0.10
 PyJWT[crypto]==2.5.0
 requests
+python-dotenv

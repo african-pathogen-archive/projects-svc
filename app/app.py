@@ -1,18 +1,23 @@
-from flask import Flask, send_from_directory
-from flask_jwt_extended import JWTManager
+from flask import Flask, send_from_directory, jsonify, abort
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_migrate import Migrate
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_restful_swagger_2 import Api as SwaggerApi
+from werkzeug.exceptions import HTTPException
 from flask_cors import CORS
 from config import Config
 from models import db
 import os
+import logging
 
 from Projects import Projects
 from Pathogens import Pathogens
 from Studies import Studies
 
-from ego import get_public_key
+from ego import get_public_key, get_application_token, new_ego_group
+
+from ego import user_has_permission, user_in_group
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -68,13 +73,51 @@ api.add_resource(Studies,
     '/api/studies/<string:study_id>/users/<string:user_id>/<string:role>'
 )
 
+### ERROR HANDLERS
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logging.error(e)
+
+    if isinstance(e, HTTPException):
+        response = e.get_response()
+        response.data = jsonify({
+            "code": e.code,
+            "name": e.name,
+            "description": e.description,
+        }).data
+        response.content_type = "application/json"
+        return response
+    else:
+        return jsonify({
+            "code": 500,
+            "name": "Internal Server Error",
+            "description": str(e),
+        }), 500
+    
 
 ### DUMMY ROUTE
 # A dummy route to test various function
 
 @app.route('/sandpit')
+@jwt_required()
 def sandpit():
-    return 'play around here'
+    try:
+        user_id = get_jwt_identity()
+        jwt_token = get_application_token()
+        if not jwt_token:
+            abort(401, 'JWT token is not available')
+
+        if not user_in_group('f59966e5-d833-4209-9615-72e78edd7b75', '36725cc5-0c86-4374-a2a2-4217911839f8', jwt_token):
+            return jsonify({'message': 'no'})
+        else:
+            return jsonify({'message': 'yes'})
+
+        
+        
+    except Exception as e:
+        raise e
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
