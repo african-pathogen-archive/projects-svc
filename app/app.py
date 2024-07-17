@@ -1,5 +1,5 @@
-from flask import Flask, send_from_directory, jsonify, abort
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from flask import Flask, send_from_directory, jsonify
+from flask_jwt_extended import JWTManager, jwt_required
 from flask_migrate import Migrate
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_restful_swagger_2 import Api as SwaggerApi
@@ -14,9 +14,7 @@ from Projects import Projects
 from Pathogens import Pathogens
 from Studies import Studies
 
-from ego import get_public_key, get_application_token, new_ego_group
-
-from ego import user_has_permission, user_in_group
+from ego import get_public_key, get_ego_users
 
 
 app = Flask(__name__)
@@ -64,6 +62,7 @@ api.add_resource(Pathogens,
 api.add_resource(Projects, 
     '/api/projects',
     '/api/projects/<string:id>',
+    '/api/projects/<string:project_id>/studies',
     '/api/projects/<string:id>/users/<string:user_id>'
 )
 api.add_resource(Studies, 
@@ -94,6 +93,13 @@ def handle_exception(e):
             "description": str(e),
         }), 500
     
+@app.route('/api/users')
+@jwt_required()
+def get_users():
+    users = get_ego_users()
+    user_count = len(users)
+    
+    return {"count":user_count, "users":users}    
 
 ### DUMMY ROUTE
 # A dummy route to test various function

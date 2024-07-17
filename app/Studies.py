@@ -1,11 +1,11 @@
-from flask import current_app, abort
+from flask import abort
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity
 import datetime
 from models import db, Study, Project
 from song import create_song_study, get_song_studies
-from ego import new_ego_group, new_ego_policy, add_policy_to_group, add_user_to_group, get_ego_group, get_ego_group_users, remove_user_from_group, get_application_token, user_has_permission, user_in_group
+from ego import new_ego_group, new_ego_policy, add_policy_to_group, add_user_to_group, get_ego_group, get_ego_group_users, remove_user_from_group, get_application_token, user_in_group
 
 class Studies(Resource):
     

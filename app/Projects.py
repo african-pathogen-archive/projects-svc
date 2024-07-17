@@ -8,8 +8,22 @@ from ego import new_ego_group, new_ego_policy, add_policy_to_group, add_user_to_
 
 class Projects(Resource):
 
-    def get(self, id=None):
-        if id:
+    def get(self, id=None, project_id=None):
+
+        if project_id:
+            # Logic for GET /api/projects/<project_id>/studies
+            
+            project = Project.query.get(project_id)
+
+            if not project:
+                abort(404, 'Project not found')
+            
+            studies = Study.query.filter_by(project_id=project_id).all()
+            studies_list = [study.as_dict() for study in studies]
+
+            return studies_list
+        
+        elif id:
             # Logic for GET /api/projects/<id>
 
             project = Project.query.get(id)
@@ -21,6 +35,9 @@ class Projects(Resource):
             studies = Study.query.filter_by(project_id=id).all()
             project_data['study_count'] = len(studies)
 
+            pathogen = Pathogen.query.get(project.pathogen_id)
+            project_data['pathogen'] = pathogen.as_dict()
+
             return project_data
         else:
             # Logic for GET /api/projects
@@ -31,8 +48,11 @@ class Projects(Resource):
                 project_data = project.as_dict()
 
                 project_data = project.as_dict()
-                studies = Study.query.filter_by(project_id=id).all()
+                studies = Study.query.filter_by(project_id=project.id).all()
                 project_data['study_count'] = len(studies)
+
+                pathogen = Pathogen.query.get(project.pathogen_id)
+                project_data['pathogen'] = pathogen.as_dict()
 
                 project_list.append(project_data)
             return project_list
@@ -93,15 +113,19 @@ class Projects(Resource):
 
             jwt_token = get_application_token()
 
-            admin_group_title = 'P-' + title.replace(' ', '_').upper() + '_ADMIN'
-            admin_policy_title = 'P-' + title.replace(' ', '_').upper()
+            admin_group_title = 'P-' + pid.replace(' ', '_').upper() + '_ADMIN'
+            admin_policy_title = 'P-' + pid.replace(' ', '_').upper()
+
+            project = Project.query.filter_by(pid=pid).first()
+            if project:
+                abort(400, 'Project with PID already exists')
 
             # EGO WORK
 
             try:
                 admin_group = new_ego_group({
                     "name": admin_group_title,
-                    "description": f"Admin group for {title} project",
+                    "description": f"Admin group for {pid} project",
                     "status": "APPROVED"
                 }, jwt_token)
             except Exception as e:
@@ -123,10 +147,6 @@ class Projects(Resource):
                 admin_user = add_user_to_group(admin_group['id'], user_id, jwt_token)
             except Exception as e:
                 raise e
-
-            project = Project.query.filter_by(title=title).first()
-            if project:
-                abort(400, 'Project already exists')
             
             new_project = Project(
                 title = title,
@@ -181,6 +201,10 @@ class Projects(Resource):
         if description:
             project.description = description
 
+        existing_project = Project.query.filter_by(pid=pid).first()
+        if existing_project and existing_project.id != project.id:
+            abort(400, 'Project with PID already exists')
+
         db.session.commit()
         return project.as_dict(), 200
     
@@ -232,6 +256,14 @@ class Projects(Resource):
 
             if not user_has_permission(get_jwt_identity(), policy, mask):
                 abort(401, "You do not have the required permissions to delete this project")
+
+            # check if project has studies
+            studies = Study.query.filter_by(project_id=id).all()
+
+            active_studies = [study for study in studies if not study.deleted_at]
+            if active_studies:
+                abort(400, 'Cannot delete a project with active studies')
+            
 
             project = db.session.get(Project, id)
             if not project:

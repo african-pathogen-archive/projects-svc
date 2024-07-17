@@ -310,3 +310,37 @@ def get_policy_groups(policy_id, jwt_token):
         raise http_err 
     except RequestException as req_err:
         raise req_err
+    
+@jwt_required()
+def get_ego_users():
+    jwt_token = get_application_token()
+
+    if not jwt_token:
+        raise Exception('JWT token is not available', 401)
+    
+    all_users = []
+    offset = 0
+    limit = 20
+
+    try:
+        while True:
+            headers = {'Authorization': f'Bearer {jwt_token}'}
+            params = {'offset': offset, 'limit': limit}
+            response = requests.get(Config.EGO_API + '/users', headers=headers, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+            all_users.extend(data["resultSet"])
+            offset += limit
+
+            if offset >= data["count"]:
+                break
+
+            all_users = [user for user in all_users if user['status'] == 'APPROVED']
+        
+        return all_users
+    
+    except HTTPError as http_err:
+        raise http_err
+    except RequestException as req_err:
+        raise req_err

@@ -237,6 +237,31 @@
         }
       }
     },
+    "/api/projects/{id}/studies": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "Get all studies for a project",
+        "operationId": "getStudiesForProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of studies"
+          },
+          "404": {
+            "description": "Project not found"
+          }
+        }
+      }
+    },
     "/api/projects/{id}/users/{user_id}": {
       "post": {
         "tags": [
