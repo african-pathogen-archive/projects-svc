@@ -97,11 +97,10 @@ class Studies(Resource):
             if not user_in_group(project.admin_group, admin_user_id, jwt_token):
                 abort(401, 'You do not have the required permissions to create a study')
             
-            description = data.get('description')
             info = data.get('info')
             name = data.get('name')
             organization = data.get('organization')
-            study_id = description.replace(' ', '_').upper()
+            study_id = name.replace(' ', '_').upper()
 
             if not (study_id):
                 abort(400, 'Study ID is required')
@@ -121,7 +120,6 @@ class Studies(Resource):
                 song_study = create_song_study({
                     'studyId': study_id,
                     'name': name,
-                    'description': description,
                     'info': info,
                     'organization': organization
                 }, jwt_token)
