@@ -4,7 +4,7 @@ from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import datetime
 from models import db, Study, Project
-from song import create_song_study, get_song_studies
+from song import create_song_study, get_song_studies, get_song_study
 from ego import new_ego_group, new_ego_policy, add_policy_to_group, add_user_to_group, get_ego_group, get_ego_group_users, remove_user_from_group, get_application_token, user_in_group
 
 class Studies(Resource):
@@ -24,10 +24,16 @@ class Studies(Resource):
             study_admin_group = get_ego_group_users(study.admin_group, jwt_token)
             study_member_group = get_ego_group_users(study.member_group, jwt_token)
 
+            study_details = get_song_study(study.study, jwt_token)
+
             study_data = study.as_dict()
 
             study_data['admins'] = study_admin_group
             study_data['members'] = study_member_group
+            study_data['name'] = study_details['name']
+            study_data['description'] = study_details['description']
+            
+            study_data['organization'] = study_details['organization']
 
             return study_data
 
@@ -204,9 +210,6 @@ class Studies(Resource):
             
             admin_user_id = get_jwt_identity()
 
-            print(admin_user_id)
-            print(study.admin_group)
-            
             jwt_token = get_application_token()
             
             if user_in_group(study.admin_group, admin_user_id, jwt_token) == False:
