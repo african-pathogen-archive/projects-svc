@@ -162,12 +162,31 @@ def get_ego_group_users(group_id, jwt_token):
     if not jwt_token:
         raise Exception('JWT token is not available', 401)
     
-    try:
-        headers = {'Authorization': f'Bearer {jwt_token}'}
-        response = requests.get(Config.EGO_API + f'/groups/{group_id}/users', headers=headers)
-        response.raise_for_status()
+    all_users = []
+    offset = 0
+    limit = 20
 
-        return response.json()
+    try:
+        while True:
+            headers = {'Authorization': f'Bearer {jwt_token}'}
+            params = {'offset': offset, 'limit': limit}
+            response = requests.get(Config.EGO_API + f'/groups/{group_id}/users', headers=headers, params=params)
+
+            response.raise_for_status()
+            
+            data = response.json()
+            all_users.extend(data["resultSet"])
+            offset += limit
+
+            if offset >= data["count"]:
+                break
+
+        all_users = [user for user in all_users if user['status'] == 'APPROVED']
+
+        return {
+            'resultSet': all_users,
+            'count': len(all_users)
+        }
     
     except HTTPError as http_err:
         raise http_err 

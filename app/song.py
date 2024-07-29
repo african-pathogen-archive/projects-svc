@@ -39,3 +39,23 @@ def create_song_study(payload, jwt_token):
             return e.response.json()
         else:
             return {'message': f"Error creating group: {e}"}, 500
+        
+@jwt_required()
+def get_song_study(study_id, jwt_token):
+
+    if not jwt_token:
+        return {'message': 'JWT token is not available'}, 401
+
+    try:        
+        headers = {'Authorization': f'Bearer {jwt_token}'}
+        response = requests.get(Config.SONG_API + '/studies/' + str(study_id), headers=headers)
+
+        response.raise_for_status()
+
+        return response.json()
+
+    except requests.exceptions.RequestException as e:
+        if e.response:
+            return e.response.json()
+        else:
+            return {'message': f"Error getting study: {e}"}, 500
