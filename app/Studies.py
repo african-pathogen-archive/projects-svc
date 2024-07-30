@@ -38,6 +38,9 @@ class Studies(Resource):
 
         else:
             # Logic for GET /api/studies
+
+            jwt_token = get_application_token()
+
             studies = Study.query.all()
             studies_list = []
             for study in studies:
