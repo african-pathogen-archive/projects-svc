@@ -30,9 +30,9 @@ class Studies(Resource):
 
             study_data['admins'] = study_admin_group
             study_data['members'] = study_member_group
-            study_data['name'] = study_details['name']
-            study_data['description'] = study_details['description']
-            study_data['organization'] = study_details['organization']
+            study_data['name'] = study_details.get('name', '')
+            study_data['description'] = study_details.get('description', '')
+            study_data['organization'] = study_details.get('organization', '')
 
             return study_data
 
@@ -47,9 +47,9 @@ class Studies(Resource):
                 study_details = get_song_study(study.study, jwt_token)
                 study_data = study.as_dict()
                 
-                study_data['name'] = study_details['name']
-                study_data['description'] = study_details['description']
-                study_data['organization'] = study_details['organization']
+                study_data['name'] = study_details.get('name', '')
+                study_data['description'] = study_details.get('description', '')
+                study_data['organization'] = study_details.get('organization', '')
 
                 studies_list.append(study_data)
             return studies_list
