@@ -46,9 +46,7 @@ class Studies(Resource):
             for study in studies:
                 study_details = get_song_study(study.study, jwt_token)
                 study_data = study.as_dict()
-
-                study_data['admins'] = study_admin_group
-                study_data['members'] = study_member_group
+                
                 study_data['name'] = study_details['name']
                 study_data['description'] = study_details['description']
                 study_data['organization'] = study_details['organization']
