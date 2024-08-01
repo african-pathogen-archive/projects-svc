@@ -133,7 +133,7 @@ When creating a project, the **projects service** will:
 
 Newly created projects in the **projects service** db will have:
 
-```javascript
+```
 id: A uuid string
 common_namtitlee: A project title
 pid: A short, unique identifier
@@ -188,7 +188,7 @@ Studies are added to a project by project administrators. When adding a new proj
 
 A new study in the **projects service** db will have:
 
-```javascript
+```
 id: A uuid string
 study: The Song study name
 project_id: The related project uuid
@@ -204,3 +204,7 @@ delete_at: Date soft deleted
 Please read the Swagger docs here: `http://localhost:5000/swagger`.
 
 API documentation may be incomplete.
+
+## Testing
+
+Test are in `/app/tests/` and can be run with `pytest app/tests/`
