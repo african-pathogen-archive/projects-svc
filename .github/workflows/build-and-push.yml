@@ -44,6 +44,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Run tests
+        run: |
+          sleep 10  # Wait for the services to be up
+          pytest tests/
+
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
