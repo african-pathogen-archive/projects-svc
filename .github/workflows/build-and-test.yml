@@ -39,16 +39,12 @@ jobs:
           pip install pytest requests
 
       - name: Build Docker containers
-        with:
-          context: .
-        run: docker-compose up -d
+        run: ./docker-compose up -d
 
       - name: Run tests
-        with:
-          context: .
         run: |
           sleep 10  # Wait for the services to be up
-          pytest app/tests/
+          pytest ./app/tests/
       
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
