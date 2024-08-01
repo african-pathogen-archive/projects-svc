@@ -44,11 +44,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run tests
-        run: |
-          sleep 10  # Wait for the services to be up
-          pytest tests/
-
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
@@ -76,6 +71,25 @@ jobs:
 #            type=sha,enable=true,format=short,prefix=,suffix=,enable=${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
           # flavor: |
           #   latest=false
+          
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest requests
+
+      - name: Build Docker containers
+        run: docker-compose up -d
+
+      - name: Run tests
+        run: |
+          sleep 10  # Wait for the services to be up
+          pytest tests/
 
 
       # Build and push Docker image with Buildx (don't push on PR)
