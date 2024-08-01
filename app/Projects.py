@@ -4,6 +4,7 @@ from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import datetime
 from models import db, Pathogen, Project, Study
+from song import get_song_study
 from ego import new_ego_group, new_ego_policy, add_policy_to_group, add_user_to_group, remove_user_from_group, get_application_token, user_in_group, user_has_permission, get_ego_group_users
 
 class Projects(Resource):
@@ -19,7 +20,20 @@ class Projects(Resource):
                 abort(404, 'Project not found')
             
             studies = Study.query.filter_by(project_id=project_id).all()
-            studies_list = [study.as_dict() for study in studies]
+
+            jwt_token = get_application_token()
+
+            studies_list = []
+
+            for study in studies:
+                study_details = get_song_study(study.study, jwt_token)
+                study_data = study.as_dict()
+                
+                study_data['name'] = study_details.get('name', '')
+                study_data['description'] = study_details.get('description', '')
+                study_data['organization'] = study_details.get('organization', '')
+
+                studies_list.append(study_data)
 
             return studies_list
         
